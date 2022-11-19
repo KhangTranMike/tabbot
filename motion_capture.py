@@ -3,6 +3,8 @@ import argparse
 import time
 import imutils
 import cv2
+import webbrowser
+import osascript
 
 ap = argparse.ArgumentParser()
 
@@ -13,6 +15,7 @@ args = vars(ap.parse_args())
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 firstFrame = None
+i = 0
 
 while True:
 	frame = vs.read()
@@ -44,20 +47,27 @@ while True:
 		cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 1)
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 1)
 		text = "Shit"
+		if cv2.contourArea(c) > 0:
+			i=1
 
 	cv2.putText(roi, "Status: {}".format(text), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-	# cv2.putText(frame, "Status: {}".format(text), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-
 
 	cv2.imshow('Cap', roi)
-	cv2.imshow('Frame', frame)
+	# cv2.imshow('Frame', frame)
 	
-	cv2.imshow("Thresh", thresh)
-	cv2.imshow("Frame Delta", frameDelta)
+	# cv2.imshow("Thresh", thresh)
+	# cv2.imshow("Frame Delta", frameDelta)
+
+	
 	key = cv2.waitKey(1) & 0xFF
 
 	if key == ord("q"):
 		break
-
+	if i > 0:
+		break
+target_volume = 0
+vol = "set volume output volume " + str(0)
+osascript.osascript(vol)
+webbrowser.open('https://www.scribbr.com/category/research-paper/', new=2)
 vs.stop()
 cv2.destroyAllWindows()
